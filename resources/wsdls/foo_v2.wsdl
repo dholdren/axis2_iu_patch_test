@@ -18,17 +18,17 @@
   -->
 
 	<wsdl:definitions xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-	                  xmlns:ns0="http://foo.sample/xsd"
+	                  xmlns:ns0="http://foo.sample/bar"
 	                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 	                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
 	                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
 	                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-	                  targetNamespace="http://foo.sample/xsd">
+	                  targetNamespace="http://foo.sample/bar">
 	  <wsdl:types>
-	    <xs:schema xmlns:ns="http://foo.sample/xsd" attributeFormDefault="qualified"
-	               elementFormDefault="unqualified" targetNamespace="http://foo.sample/xsd">
+	    <xs:schema xmlns:ns="http://foo.sample/bar" attributeFormDefault="qualified"
+	               elementFormDefault="unqualified" targetNamespace="http://foo.sample/bar">
 	      <!-- unordered type -->
         <xs:complexType name="FullName">
           <xs:all>

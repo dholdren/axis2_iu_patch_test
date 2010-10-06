@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bar="http://foo.sample/bar">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <bar:getFooResponse>
+        <retval_one>bar_one</retval_one>
+        <extra>bar2extra</extra>
+        <retval_two>bar_two</retval_two>
+      </bar:getFooResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

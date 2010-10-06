@@ -1,8 +1,9 @@
 #!/usr/bin/env jruby
-
+$: << File.expand_path(".")
 require 'test/unit'
 #require 'fakeweb'
 require 'rack'
+require 'webrick'
 require 'bwards_livemock'
 include Java
 
@@ -14,11 +15,10 @@ class BwardsTests < Test::Unit::TestCase
   #(ignore unexpected optional element for backwards compatibility of new service)
   
   def setup
-    axis2_patch_dir = "../axis2_patch"
-    @v1_artifact_location = File.dirname(".")+"/java-artifacts/v1"
-    @v2_artifact_location = File.dirname(".")+"/java-artifacts/v2"
+    @currdir = File.expand_path(".")
+    axis2_patch_dir = File.expand_path("../axis2_patch")
     
-    require "#{axis2_patch_dir}/target/lib/axis2-1.5.3-SNAPSHOT.jar"
+    require "#{axis2_patch_dir}/target/axis2-1.5.3-SNAPSHOT.jar"
     require "#{axis2_patch_dir}/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
     require "#{axis2_patch_dir}/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
     run_jars = [
@@ -36,42 +36,54 @@ class BwardsTests < Test::Unit::TestCase
       "wsdl4j-1.6.2.jar"
     ]
     run_jars.each {|jar_name|
-      require "./libs/#{jar_name}"
+      require "#{@currdir}/lib/#{jar_name}"
     }
     
-    #startup a Webrick::Rack instance for service mock responses
-    Rack::Handler::WEBrick.run(BwardsLiveMock.new, :Port => 9009)
+    setup_server
   end
   
+  def setup_server
+    @server = WEBrick::HTTPServer.new(:Port => 9009)
+    @server.mount('/', Rack::Handler::WEBrick, BwardsLiveMock.new)
+    @server_thread = Thread.new {
+      Thread.current.abort_on_exception = true
+      @server.start
+    }
+    #sleep 0.5
+  end
+    
   def teardown
-    Rack::Handler::WEBrick.shutdown
+    @server.shutdown
+    @server = nil
+    @server_thread.kill
+    @server_thread.join
+    #Rack::Handler::WEBrick.shutdown
   end
   
-  def test_matching_wsdl_response_works
-    require @v1_artifact_location+"/build/lib/Foo-test-client.jar"
-    client_version = "v1"
-    response_version = "v1"
-    get_and_test_response(client_version, response_version)
+  def test_foo_service_matching_javabeans_response_works
+    require "#{@currdir}/java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
+    get_and_test_foo_service_response("foo_v1")
+    #weirdly, we need to do this or we don't get the test output sometimes... something with threads and IO
+    puts
   end
   
-  def test_old_wsdl_new_response_works
-    require @v1_artifact_location+"/build/lib/Foo-test-client.jar"
-    client_version = "v1"
-    response_version = "v2"
-    get_and_test_response(client_version, response_version)
+  def test_foo_service_old_javabeans_new_response_works
+    require "#{@currdir}/java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
+    get_and_test_foo_service_response("foo_v2")
+    #weirdly, we need to do this or we don't get the test output sometimes... something with threads and IO    
+    puts
   end
 
   private
     
-    def get_and_test_response(client_version, response_version)
-      #call method, but mock response, may have to mock java http
-      #mock the envelope getBody method to return a specified response
-      #mock the operationClient execute method to do nothing
+    def get_and_test_foo_service_response(response)
       res = nil
       assert_nothing_raised do
-        include_class 'sample.foo.xsd.FooStub'
-        include_class 'sample.foo.xsd.GetFooRequest'
-        stub = FooStub.new("http://127.0.0.1:9009/?response_version=#{response_version}")
+        #include_class 'sample.foo.xsd.FooStub'
+        include_class 'sample.foo.bar.FooStub'
+        #include_class 'sample.foo.xsd.GetFooRequest'
+        include_class 'sample.foo.bar.GetFooRequest'
+        stub = FooStub.new("http://127.0.0.1:9009/?response=#{response}")
         req = GetFooRequest.new()
         req.aparam = "avalue"
         res = stub.getFoo(req)
