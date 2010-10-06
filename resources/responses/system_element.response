@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sys="http://foo.sample/sys">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <sys:getSysEleResponse>
+        <whatsystem>fsys</whatsystem>
+      </sys:getSysEleResponse>
+   </soapenv:Body>
+</soapenv:Envelope>

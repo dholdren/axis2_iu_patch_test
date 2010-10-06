@@ -1,0 +1,63 @@
+<wsdl:definitions xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:ns0="http://foo.sample/sys"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  targetNamespace="http://foo.sample/sys">
+  <wsdl:types>
+    <xs:schema xmlns:ns="http://foo.sample/sys" attributeFormDefault="qualified"
+               elementFormDefault="unqualified" targetNamespace="http://foo.sample/sys">
+      <xs:simpleType name="System"><xs:restriction base="xs:string"><xs:length fixed="true" value="4"/></xs:restriction></xs:simpleType>
+      <xs:element name="getSysEleResponse">
+        <xs:complexType>
+          <xs:sequence>
+	          <xs:element minOccurs="0" name="whatsystem" nillable="true" type="ns:System"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+			<xs:element name="getSysEleRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" name="aparam" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getSysEleRequest">
+	  <wsdl:part element="ns0:getSysEleRequest" name="getSysEleRequest">
+    </wsdl:part>
+	</wsdl:message>
+  <wsdl:message name="getSysEleResponse">
+    <wsdl:part element="ns0:getSysEleResponse" name="getSysEleResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SysElePortType">
+    <wsdl:operation name="getSysEle">
+      <wsdl:input message="ns0:getSysEleRequest" wsaw:Action="urn:getSysEle"/>
+      <wsdl:output message="ns0:getSysEleResponse" wsaw:Action="urn:getSysEleResponse"/>
+    </wsdl:operation>
+
+  </wsdl:portType>
+  <wsdl:binding name="SysEleSOAP11Binding" type="ns0:SysElePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="getSysEle">
+      <soap:operation soapAction="urn:getSysEle" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+
+  </wsdl:binding>
+  <wsdl:service name="SysEle">
+    <wsdl:port name="SysEleSOAP11port_http" binding="ns0:SysEleSOAP11Binding">
+      <soap:address location="http://127.0.0.1:8000/axis2/services/SysEle"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
