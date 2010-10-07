@@ -73,8 +73,7 @@ class SystemElementTests < Test::Unit::TestCase
       #puts res.inspect
     end
     assert res, "response is nil"
-    assert_equal "fsys", res.whatsystem, "whatsystem incorrect"
-#    assert_equal "sysfoo", res.aretval, "aretval incorrect"
+    assert_equal "fsys", res.whatsystem.getSystem, "whatsystem incorrect"
     #something with the webrick thread...
     puts
   end
