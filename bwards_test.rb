@@ -73,15 +73,25 @@ class BwardsTests < Test::Unit::TestCase
     #weirdly, we need to do this or we don't get the test output sometimes... something with threads and IO    
     puts
   end
+  
+  def test_names_service_matching_javabeans_response_works
+    require "#{@currdir}/java-artifacts/names_v1/build/lib/Names-test-client.jar"
+    get_and_test_names_service_response("names_v1")
+    puts
+  end
+  
+  def test_names_service_old_javabeans_new_response_works
+    require "#{@currdir}/java-artifacts/names_v1/build/lib/Names-test-client.jar"
+    get_and_test_names_service_response("names_v2")
+    puts
+  end
 
   private
     
     def get_and_test_foo_service_response(response)
       res = nil
       assert_nothing_raised do
-        #include_class 'sample.foo.xsd.FooStub'
         include_class 'sample.foo.bar.FooStub'
-        #include_class 'sample.foo.xsd.GetFooRequest'
         include_class 'sample.foo.bar.GetFooRequest'
         stub = FooStub.new("http://127.0.0.1:9009/?response=#{response}")
         req = GetFooRequest.new()
@@ -92,6 +102,27 @@ class BwardsTests < Test::Unit::TestCase
       assert res, "response is nil"
       assert_equal "bar_one", res.retval_one, "retval_one incorrect"
       assert_equal "bar_two", res.retval_two, "retval_two incorrect"
+    end
+    
+    def get_and_test_names_service_response(response)
+      res = nil
+      assert_nothing_raised do
+        include_class 'com.test.names.NamesStub'
+        include_class 'com.test.names.GetNamesRequest'
+        stub = NamesStub.new("http://127.0.0.1:9009/?response=#{response}")
+        req = GetNamesRequest.new()
+        req.aparam = "avalue"
+        res = stub.getNames(req)
+      end
+      assert res, "response is nil"
+      assert_equal 3, res.fullnames.length, "size of fullnames list is incorrect"
+      assert_equal "Afirstname1", res.fullnames[0].first, "fullnames[0].first incorrect"
+      assert_equal "Alastname1", res.fullnames[0].last, "fullnames[0].last incorrect"
+      assert_equal "Afirstname2", res.fullnames[1].first, "fullnames[1].first incorrect"
+      assert_equal "Alastname2", res.fullnames[1].last, "fullnames[1].last incorrect"
+      assert_equal "Afirstname3", res.fullnames[2].first, "fullnames[2].first incorrect"
+      assert_equal "Alastname3", res.fullnames[2].last, "fullnames[2].last incorrect"
+      
     end
 
 end
