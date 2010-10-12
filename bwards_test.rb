@@ -1,11 +1,26 @@
 #!/usr/bin/env jruby
 $: << File.expand_path(".")
 require 'test/unit'
-#require 'fakeweb'
 require 'rack'
 require 'webrick'
 require 'bwards_livemock'
+
 include Java
+require "../axis2_patch/target/axis2-1.5.3-SNAPSHOT.jar"
+require "../axis2_patch/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
+require "../axis2_patch/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
+require "lib/XmlSchema-1.4.3.jar"
+require "lib/axiom-api-1.2.9.jar"
+require "lib/axiom-dom-1.2.9.jar"
+require "lib/axiom-impl-1.2.9.jar"
+require "lib/commons-codec-1.3.jar"
+require "lib/commons-httpclient-3.1.jar"
+require "lib/commons-logging-1.1.1.jar"
+require "lib/httpcore-4.0.jar"
+require "lib/mail-1.4.jar"
+require "lib/neethi-2.0.4.jar"
+require "lib/woden-api-1.0M8.jar"
+require "lib/wsdl4j-1.6.2.jar"
 
 class BwardsTests < Test::Unit::TestCase
 
@@ -15,30 +30,6 @@ class BwardsTests < Test::Unit::TestCase
   #(ignore unexpected optional element for backwards compatibility of new service)
   
   def setup
-    @currdir = File.expand_path(".")
-    axis2_patch_dir = File.expand_path("../axis2_patch")
-    
-    require "#{axis2_patch_dir}/target/axis2-1.5.3-SNAPSHOT.jar"
-    require "#{axis2_patch_dir}/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
-    require "#{axis2_patch_dir}/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
-    run_jars = [
-      "XmlSchema-1.4.3.jar",
-      "axiom-api-1.2.9.jar",
-      "axiom-dom-1.2.9.jar",
-      "axiom-impl-1.2.9.jar",
-      "commons-codec-1.3.jar",
-      "commons-httpclient-3.1.jar",
-      "commons-logging-1.1.1.jar",
-      "httpcore-4.0.jar",
-      "mail-1.4.jar",
-      "neethi-2.0.4.jar",
-      "woden-api-1.0M8.jar",
-      "wsdl4j-1.6.2.jar"
-    ]
-    run_jars.each {|jar_name|
-      require "#{@currdir}/lib/#{jar_name}"
-    }
-    
     setup_server
   end
   
@@ -61,31 +52,41 @@ class BwardsTests < Test::Unit::TestCase
   end
   
   def test_foo_service_matching_javabeans_response_works
-    require "#{@currdir}/java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
+    require "java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
     get_and_test_foo_service_response("foo_v1")
     #weirdly, we need to do this or we don't get the test output sometimes... something with threads and IO
     puts
   end
   
   def test_foo_service_old_javabeans_new_response_works
-    require "#{@currdir}/java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
+    require "java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
     get_and_test_foo_service_response("foo_v2")
     #weirdly, we need to do this or we don't get the test output sometimes... something with threads and IO    
     puts
   end
   
+  def test_foo_service_old_javabeans_new_complex_response_works
+    require "java-artifacts/foo_v1/build/lib/Foo-test-client.jar"
+    res = get_and_test_foo_service_response("foo_v2_complex")
+    assert_equal "afirstname", res.fullname.first
+    assert_equal "alastname", res.fullname.last
+    
+    
+    puts
+  end
+  
   def test_names_service_matching_javabeans_response_works
-    require "#{@currdir}/java-artifacts/names_v1/build/lib/Names-test-client.jar"
+    require "java-artifacts/names_v1/build/lib/Names-test-client.jar"
     get_and_test_names_service_response("names_v1")
     puts
   end
   
   def test_names_service_old_javabeans_new_response_works
-    require "#{@currdir}/java-artifacts/names_v1/build/lib/Names-test-client.jar"
+    require "java-artifacts/names_v1/build/lib/Names-test-client.jar"
     get_and_test_names_service_response("names_v2")
     puts
   end
-
+  
   private
     
     def get_and_test_foo_service_response(response)
@@ -102,6 +103,7 @@ class BwardsTests < Test::Unit::TestCase
       assert res, "response is nil"
       assert_equal "bar_one", res.retval_one, "retval_one incorrect"
       assert_equal "bar_two", res.retval_two, "retval_two incorrect"
+      res
     end
     
     def get_and_test_names_service_response(response)
@@ -122,7 +124,7 @@ class BwardsTests < Test::Unit::TestCase
       assert_equal "Alastname2", res.fullnames[1].last, "fullnames[1].last incorrect"
       assert_equal "Afirstname3", res.fullnames[2].first, "fullnames[2].first incorrect"
       assert_equal "Alastname3", res.fullnames[2].last, "fullnames[2].last incorrect"
-      
+      res
     end
 
 end

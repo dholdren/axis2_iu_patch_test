@@ -34,6 +34,7 @@
           <xs:all>
               <xs:element minOccurs="0" name="first" nillable="true" type="xs:string"/>
               <xs:element minOccurs="0" name="last" nillable="true" type="xs:string"/>
+              <xs:element minOccurs="0" name="middle" nillable="true" type="xs:string"/>
           </xs:all>
         </xs:complexType>
         <xs:simpleType name="FourChars"><xs:restriction base="xs:string"><xs:length fixed="true" value="4"/></xs:restriction></xs:simpleType>
@@ -42,6 +43,7 @@
 	        <xs:choice>
             <xs:element minOccurs="0" name="userid" nillable="true" type="xs:int"/>
             <xs:element minOccurs="0" name="username" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="emailaddress" nillable="true" type="xs:string"/>
           </xs:choice>
         </xs:complexType>
 	      <xs:element name="getFooResponse">
@@ -51,8 +53,8 @@
 		          <xs:element minOccurs="0" name="id" nillable="true" type="ns:ID"/>
 			        <xs:element minOccurs="0" name="last4digits" nillable="true" type="ns:FourChars"/>
 	            <xs:element minOccurs="0" name="retval_one" nillable="true" type="xs:string"/>
-		          <xs:element minOccurs="0" name="extra" nillable="true" type="xs:string"/>
 	            <xs:element minOccurs="0" name="retval_two" nillable="true" type="xs:string"/>
+		          <xs:element minOccurs="0" name="extra" nillable="true" type="xs:string"/>
 	          </xs:sequence>
 	        </xs:complexType>
 	      </xs:element>

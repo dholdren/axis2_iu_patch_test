@@ -1,3 +1,4 @@
+#!/usr/bin/env jruby
 require 'rack/request'
 require 'rack/response'
 

@@ -10,12 +10,20 @@
   <wsdl:types>
     <xs:schema xmlns:ns="http://test.com/multi" attributeFormDefault="qualified"
                elementFormDefault="unqualified" targetNamespace="http://test.com/multi">
+      <xs:complexType name="Phone">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="home" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="work" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
       <xs:complexType name="FullName">
 	      <xs:sequence>
             <xs:element minOccurs="0" name="first" nillable="true" type="xs:string"/>
             <xs:element minOccurs="0" name="last" nillable="true" type="xs:string"/>
-            <!--new element appended -->
+            <!--new elements appended -->
             <xs:element minOccurs="0" name="middle" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="suffix" nillable="true" type="xs:string"/>
+            <xs:element minOccurs="0" name="phoneinfo" nillable="true" type="ns:Phone"/>
         </xs:sequence>
       </xs:complexType>
       <xs:element name="getNamesResponse">
