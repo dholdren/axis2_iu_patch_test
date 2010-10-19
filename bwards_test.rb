@@ -6,21 +6,24 @@ require 'webrick'
 require 'bwards_livemock'
 
 include Java
-require "../axis2_patch/target/axis2-1.5.3-SNAPSHOT.jar"
-require "../axis2_patch/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
-require "../axis2_patch/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
-require "lib/XmlSchema-1.4.3.jar"
-require "lib/axiom-api-1.2.9.jar"
-require "lib/axiom-dom-1.2.9.jar"
-require "lib/axiom-impl-1.2.9.jar"
-require "lib/commons-codec-1.3.jar"
-require "lib/commons-httpclient-3.1.jar"
-require "lib/commons-logging-1.1.1.jar"
-require "lib/httpcore-4.0.jar"
-require "lib/mail-1.4.jar"
-require "lib/neethi-2.0.4.jar"
-require "lib/woden-api-1.0M8.jar"
-require "lib/wsdl4j-1.6.2.jar"
+require "maven_utils"
+include MavenUtils
+$axis_version = ENV['AXIS_VERSION'] || "1.5.3-SNAPSHOT"
+require maven_location(:group => "org.apache.axis2",            :artifact => "axis2",                     :set => $axis_version)
+require maven_location(:group => "org.apache.axis2",            :artifact => "axis2-transport-http",      :set => $axis_version)
+require maven_location(:group => "org.apache.axis2",            :artifact => "axis2-transport-local",     :set => $axis_version)
+require maven_location(:group => "org.apache.ws.commons.schema",:artifact => "XmlSchema",                 :set => $axis_version)
+require maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-api",                 :set => $axis_version)
+require maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-dom",                 :set => $axis_version)
+require maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-impl",                :set => $axis_version)
+require maven_location(:group => "commons-codec",               :artifact => "commons-codec",             :set => $axis_version)
+require maven_location(:group => "commons-httpclient",          :artifact => "commons-httpclient",        :set => $axis_version)
+require maven_location(:group => "commons-logging",             :artifact => "commons-logging",           :set => $axis_version)
+require maven_location(:group => "org.apache.httpcomponents",   :artifact => "httpcore",                  :set => $axis_version)
+require maven_location(:group => "javax.mail",                  :artifact => "mail",                      :set => $axis_version)
+require maven_location(:group => "org.apache.neethi",           :artifact => "neethi",                    :set => $axis_version)
+require maven_location(:group => "org.apache.woden",            :artifact => "woden-api",                 :set => $axis_version)
+require maven_location(:group => "wsdl4j",                      :artifact => "wsdl4j",                    :set => $axis_version)
 
 class BwardsTests < Test::Unit::TestCase
 

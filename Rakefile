@@ -1,4 +1,9 @@
 require "rake/testtask"
+$: << File.expand_path(".")
+require "maven_utils"
+include MavenUtils
+
+$axis_version = ENV['AXIS_VERSION'] || '1.5.3-SNAPSHOT'
 
 Rake::TestTask.new do |t|
   #t.libs << "test"
@@ -15,29 +20,28 @@ end
 desc "create all the Axis JavaBeans from the patched axis"
 task :generate_artifacts do
   currdir = File.expand_path(".")
-  axis2_patch_home = File.expand_path("./../axis2_patch/target")
   
   system("rm -rf ./java-artifacts/*")
   
   wsdls = Dir.glob("./resources/wsdls/*.wsdl")
     
-  build_jars = [ 
-      "#{axis2_patch_home}/axis2-1.5.3-SNAPSHOT.jar",
-      "#{currdir}/lib/XmlSchema-1.4.3.jar",
-      "#{currdir}/lib/activation-1.1.jar",
-      "#{currdir}/lib/axiom-api-1.2.9.jar",
-      "#{currdir}/lib/axiom-dom-1.2.9.jar",
-      "#{currdir}/lib/axiom-impl-1.2.9.jar",
-      "#{currdir}/lib/commons-codec-1.3.jar",
-      "#{currdir}/lib/commons-httpclient-3.1.jar",
-      "#{currdir}/lib/commons-logging-1.1.1.jar",
-      "#{currdir}/lib/geronimo-stax-api_1.0_spec-1.0.1.jar",
-      "#{currdir}/lib/httpcore-4.0.jar",
-      "#{currdir}/lib/neethi-2.0.4.jar",
-      "#{currdir}/lib/wsdl4j-1.6.2.jar",
-      "#{currdir}/lib/wstx-asl-3.2.9.jar",
-      "#{currdir}/lib/xalan-2.7.0.jar",
-      "#{currdir}/lib/xmlbeans-2.3.0.jar"      
+  build_jars = [
+    maven_location(:group => "org.apache.axis2",            :artifact => "axis2",                     :set => $axis_version),
+    maven_location(:group => "org.apache.ws.commons.schema",:artifact => "XmlSchema",                 :set => $axis_version),
+    maven_location(:group => "javax.activation",            :artifact => "activation",                :set => $axis_version),
+    maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-api",                 :set => $axis_version),
+    maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-dom",                 :set => $axis_version),
+    maven_location(:group => "org.apache.ws.commons.axiom", :artifact => "axiom-impl",                :set => $axis_version),
+    maven_location(:group => "commons-codec",               :artifact => "commons-codec",             :set => $axis_version),
+    maven_location(:group => "commons-httpclient",          :artifact => "commons-httpclient",        :set => $axis_version),
+    maven_location(:group => "commons-logging",             :artifact => "commons-logging",           :set => $axis_version),
+    maven_location(:group => "org.apache.geronimo.specs",   :artifact => "geronimo-stax-api_1.0_spec",:set => $axis_version),
+    maven_location(:group => "org.apache.httpcomponents",   :artifact => "httpcore",                  :set => $axis_version),
+    maven_location(:group => "org.apache.neethi",           :artifact => "neethi",                    :set => $axis_version),
+    maven_location(:group => "wsdl4j",                      :artifact => "wsdl4j",                    :set => $axis_version),
+    maven_location(:group => "org.codehaus.woodstox",       :artifact => "wstx-asl",                  :set => $axis_version),
+    maven_location(:group => "xalan",                       :artifact => "xalan",                     :set => $axis_version),
+    maven_location(:group => "org.apache.xmlbeans",         :artifact => "xmlbeans",                  :set => $axis_version)
   ]
   cp = build_jars.join(":")
   
@@ -48,12 +52,12 @@ task :generate_artifacts do
 
     #generate Axis JavaBean classes from wsdl, -Eiu is our new flag to ignore unexpected
     puts "running wsdl2java command:"
-    puts "export AXIS2_HOME=#{axis2_patch_home} && java -cp #{cp} org.apache.axis2.wsdl.WSDL2Java -uri #{wsdl_full_filename} -u -Eosv -Eiu -o #{java_artifact_location}"
-    system("export AXIS2_HOME=#{axis2_patch_home} && java -cp #{cp} org.apache.axis2.wsdl.WSDL2Java -uri #{wsdl_full_filename} -u -Eosv -Eiu -o #{java_artifact_location}")
+    puts "export AXIS2_HOME= && java -cp #{cp} org.apache.axis2.wsdl.WSDL2Java -uri #{wsdl_full_filename} -u -Eosv -Eiu -o #{java_artifact_location}"
+    system("export AXIS2_HOME= && java -cp #{cp} org.apache.axis2.wsdl.WSDL2Java -uri #{wsdl_full_filename} -u -Eosv -Eiu -o #{java_artifact_location}")
     #compile Axis JavaBean classes
     puts "running ant command:"
-    puts "export AXIS2_HOME=#{axis2_patch_home} && cd #{java_artifact_location} && export CLASSPATH=#{cp} && ant"
-    system("export AXIS2_HOME=#{axis2_patch_home} && cd #{java_artifact_location} && export CLASSPATH=#{cp} && ant")
+    puts "export AXIS2_HOME= && cd #{java_artifact_location} && export CLASSPATH=#{cp} && ant"
+    system("export AXIS2_HOME= && cd #{java_artifact_location} && export CLASSPATH=#{cp} && ant")
   
   }
 
