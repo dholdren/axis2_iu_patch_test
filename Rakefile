@@ -9,8 +9,6 @@ end
 
 desc "build the axis2 patch itself"
 task :build_axis2_patch do
-  #cd ../axis2_patch
-  #mvn install
   system("cd ../axis2_patch && mvn -Dmaven.test.skip=true -DskipTests=true install")
 end
 
@@ -18,14 +16,10 @@ desc "create all the Axis JavaBeans from the patched axis"
 task :generate_artifacts do
   currdir = File.expand_path(".")
   axis2_patch_home = File.expand_path("./../axis2_patch/target")
-  v1_artifact_location = "#{currdir}/java-artifacts/v1"
-  v2_artifact_location = "#{currdir}/java-artifacts/v2"
   
   system("rm -rf ./java-artifacts/*")
   
   wsdls = Dir.glob("./resources/wsdls/*.wsdl")
-  #v1_wsdl = File.dirname(".")+"/resources/wsdls/v1.wsdl"
-  #v2_wsdl = File.dirname(".")+"/resources/wsdls/v2.wsdl"
     
   build_jars = [ 
       "#{axis2_patch_home}/axis2-1.5.3-SNAPSHOT.jar",
@@ -62,10 +56,6 @@ task :generate_artifacts do
     system("export AXIS2_HOME=#{axis2_patch_home} && cd #{java_artifact_location} && export CLASSPATH=#{cp} && ant")
   
   }
-  #generate Axis JavaBean classes from wsdl, -Eiu is our new flag to ignore unexpected
-#  system("export AXIS2_HOME=#{axis2_patch_home} && java -cp #{cp} org.apache.axis2.wsdl.WSDL2Java -uri #{v2_wsdl} -u -Eosv -Eiu -o #{v2_artifact_location}")
-  #compile Axis JavaBean classes
-#  system("export AXIS2_HOME=#{axis2_patch_home} && cd #{v2_artifact_location} && export CLASSPATH=#{cp} && ant")
 
 end
 

@@ -1,43 +1,34 @@
 #!/usr/bin/env jruby
 $: << File.expand_path(".")
 require 'test/unit'
-#require 'fakeweb'
 require 'rack'
 require 'webrick'
 require 'bwards_livemock'
+
 include Java
+require "../axis2_patch/target/axis2-1.5.3-SNAPSHOT.jar"
+require "../axis2_patch/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
+require "../axis2_patch/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
+require "lib/XmlSchema-1.4.3.jar"
+require "lib/axiom-api-1.2.9.jar"
+require "lib/axiom-dom-1.2.9.jar"
+require "lib/axiom-impl-1.2.9.jar"
+require "lib/commons-codec-1.3.jar"
+require "lib/commons-httpclient-3.1.jar"
+require "lib/commons-logging-1.1.1.jar"
+require "lib/httpcore-4.0.jar"
+require "lib/mail-1.4.jar"
+require "lib/neethi-2.0.4.jar"
+require "lib/woden-api-1.0M8.jar"
+require "lib/wsdl4j-1.6.2.jar"
 
 class SystemElementTests < Test::Unit::TestCase
 
 
-  #asume new version of wsdl defines an optional element, and the new service returns it in response
-  #test that a client generated against old wsdl is still compatible
-  #(ignore unexpected optional element for backwards compatibility of new service)
+  #Test that an element of xsd type "System" works (broken in 1.5.1)
   
   def setup
     @currdir = File.expand_path(".")
-    axis2_patch_dir = File.expand_path("../axis2_patch")
-    
-    require "#{axis2_patch_dir}/target/axis2-1.5.3-SNAPSHOT.jar"
-    require "#{axis2_patch_dir}/modules/transport/http/target/axis2-transport-http-1.5.3-SNAPSHOT.jar"
-    require "#{axis2_patch_dir}/modules/transport/local/target/axis2-transport-local-1.5.3-SNAPSHOT.jar"
-    run_jars = [
-      "XmlSchema-1.4.3.jar",
-      "axiom-api-1.2.9.jar",
-      "axiom-dom-1.2.9.jar",
-      "axiom-impl-1.2.9.jar",
-      "commons-codec-1.3.jar",
-      "commons-httpclient-3.1.jar",
-      "commons-logging-1.1.1.jar",
-      "httpcore-4.0.jar",
-      "mail-1.4.jar",
-      "neethi-2.0.4.jar",
-      "woden-api-1.0M8.jar",
-      "wsdl4j-1.6.2.jar"
-    ]
-    run_jars.each {|jar_name|
-      require "#{@currdir}/lib/#{jar_name}"
-    }
     
     setup_server
   end
