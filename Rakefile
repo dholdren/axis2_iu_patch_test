@@ -13,8 +13,18 @@ Rake::TestTask.new do |t|
 end
 
 desc "build the axis2 patch itself"
-task :build_axis2_patch do
-  system("cd ../axis2_patch && mvn -Dmaven.test.skip=true -DskipTests=true install")
+task :build_axis2 do
+  if File.exists? "../axis2_br_1_5"
+    system("cd ../axis2_br_1_5 && mvn -Dmaven.test.skip=true -DskipTests=true install")
+  else
+    puts "WARNING: ../axis2_br_1_5 does not exist"
+  end
+  
+  if File.exists? "../axis2_trunk"
+    system("cd ../axis2_trunk && mvn -Dmaven.test.skip=true -DskipTests=true install")
+  else
+    puts "WARNING: ../axis2_trunk does not exist"
+  end
 end
 
 desc "create all the Axis JavaBeans from the patched axis"
@@ -64,4 +74,4 @@ task :generate_artifacts do
 end
 
 desc "call build_axis2_patch, generate_artifacts, test"
-task :default => [:build_axis2_patch,:generate_artifacts,:test]
+task :default => [:build_axis2,:generate_artifacts,:test]

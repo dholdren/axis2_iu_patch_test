@@ -1,25 +1,40 @@
 This project is a set of tests for a patch to Apache Axis2.
 It uses JRuby, Test::Unit, Rack (for service mock responses)
-
 Also there's some simple Maven integration for 'require'-ing java libs in your local repo.
 
+This project was used to develop the patch via TDD, it has been submitted here:
+https://issues.apache.org/jira/browse/AXIS2-4859
+I've included the result in resources/patches/
 
-To apply the patch:
-1) check out Axis2 trunk:
-svn co http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk axis2
 
-2) apply the patch:
-cd axis2
-patch -p0 -i path/to/thisproject/resources/patches/ui_trunk.patch
+To test the patch:
+1) check out Axis2 in the directory above this one:
+  cd ..
+a) 1_5 branch:
+  svn co http://svn.apache.org/repos/asf/axis/axis2/java/core/branches/1_5 axis2_br_1_5
+b) trunk:
+  svn co http://svn.apache.org/repos/asf/axis/axis2/java/core/trunk axis2_trunk
 
-3) build axis2 SNAPSHOT (trunk): 
-(this will place the compiled jars and dependencies into your local maven rep)
-mvn -Dmaven.test.skip=true -DskipTests=true install
+2) apply the patch
+a) 1_5 branch (JAR version: 1.5.3-SNAPSHOT)
+  cd axis2_br_1_5
+  patch -p0 -i ../axis2_iu_patch_test/resources/patches/ui_1_5.patch
+b) trunk (JAR version: SNAPSHOT)
+  cd axis2_trunk
+  patch -p0 -i ../axis2_iu_patch_test/resources/patches/ui_trunk.patch
 
-4) generate axis2 clients for testing:
+3) build Axis2 with changes (both versions):
+  rake build_axis2
+
+3) generate axis2 clients for testing:
 (from this project's root)
-rake generate_artifacts
+a) (with 1.5.3-SNAPSHOT jars - DEFAULT)
+  rake generate_artifacts
+b) (with SNAPSHOT jars)
+  rake generate_artifacts AXIS_VERSION=SNAPSHOT
 
-5) run the tests:
-rake test
-
+4) run the tests:
+a) (with 1.5.3-SNAPSHOT jars - DEFAULT)
+  rake test
+b) (with SNAPSHOT jars)
+  rake test AXIS_VERSION=SNAPSHOT
