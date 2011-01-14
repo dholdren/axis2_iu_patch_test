@@ -18,10 +18,10 @@ b) trunk:
 2) apply the patch
 a) 1_5 branch (JAR version: 1.5.3-SNAPSHOT)
   cd axis2_br_1_5
-  patch -p0 -i ../axis2_iu_patch_test/resources/patches/ui_1_5.patch
+  patch -p0 -i ../axis2_iu_patch_test/resources/patches/iu_1_5.patch
 b) trunk (JAR version: SNAPSHOT)
   cd axis2_trunk
-  patch -p0 -i ../axis2_iu_patch_test/resources/patches/ui_trunk.patch
+  patch -p0 -i ../axis2_iu_patch_test/resources/patches/iu_trunk.patch
 
 3) build Axis2 with changes (both versions):
   rake build_axis2
